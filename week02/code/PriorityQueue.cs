@@ -1,4 +1,4 @@
-﻿public class PriorityQueue
+﻿﻿public class PriorityQueue
 {
     private List<PriorityItem> _queue = new();
 
@@ -15,28 +15,32 @@
         _queue.Add(newNode);
     }
 
-    public string Dequeue()
+public string Dequeue()
+{
+    if (_queue.Count == 0) // Verify the queue is not empty
     {
-        if (_queue.Count == 0) // Verify the queue is not empty
-        {
-            throw new InvalidOperationException("The queue is empty.");
-        }
-
-        // Find the index of the item with the highest priority to remove
-        var highPriorityIndex = 0;
-        for (int index = 1; index < _queue.Count - 1; index++)
-        {
-            if (_queue[index].Priority >= _queue[highPriorityIndex].Priority)
-                highPriorityIndex = index;
-        }
-
-        // Remove and return the item with the highest priority
-        var value = _queue[highPriorityIndex].Value;
-        return value;
+        throw new InvalidOperationException("The queue is empty.");
     }
 
-    // DO NOT MODIFY THE CODE IN THIS METHOD
-    // The graders rely on this method to check if you fixed all the bugs, so changes to it will cause you to lose points.
+    // Find the index of the item with the highest priority to remove
+    var highPriorityIndex = 0;
+    for (int index = 1; index < _queue.Count; index++) // Fixed off-by-one error
+    {
+        if (_queue[index].Priority > _queue[highPriorityIndex].Priority)
+        {
+            highPriorityIndex = index;
+        }
+    }
+
+    var value = _queue[highPriorityIndex].Value;
+
+    // Remove the item from the queue (FIFO is preserved automatically by using index)
+    _queue.RemoveAt(highPriorityIndex);
+
+    return value;
+}
+
+
     public override string ToString()
     {
         return $"[{string.Join(", ", _queue)}]";
@@ -54,8 +58,6 @@ internal class PriorityItem
         Priority = priority;
     }
 
-    // DO NOT MODIFY THE CODE IN THIS METHOD
-    // The graders rely on this method to check if you fixed all the bugs, so changes to it will cause you to lose points.
     public override string ToString()
     {
         return $"{Value} (Pri:{Priority})";
